@@ -874,4 +874,5 @@ you'll probably never need it, but you'll be glad it's there.
 
 - **[edouard-claude](https://github.com/edouard-claude)** — creator of [snip](https://github.com/edouard-claude/snip), the CLI proxy and all 126 built-in YAML filters. Inspired by [rtk](https://github.com/rtk-ai/rtk).
 - **[VincentHardouin](https://github.com/VincentHardouin)** — creator of [opencode-snip](https://github.com/VincentHardouin/opencode-snip), the OpenCode plugin that auto-wraps `bash` tool calls.
+- **[DeepSeek](https://deepseek.com)** — AI model provider (deepseek-v4-pro via Anthropic-compatible API) powering the agent behind this skill's analysis and curation.
 - This skill analyzes and curates their work for safe agent use — filter audit, escape protocol, and recommended config are original to this project.

@@ -81,6 +81,7 @@ snip-skill/
 
 - **[edouard-claude/snip](https://github.com/edouard-claude/snip)** — original [snip](https://github.com/edouard-claude/snip) CLI proxy and 126 YAML filters. Inspired by [rtk](https://github.com/rtk-ai/rtk).
 - **[VincentHardouin/opencode-snip](https://github.com/VincentHardouin/opencode-snip)** — OpenCode plugin that auto-prefixes `bash` tool calls with `snip`.
+- **[DeepSeek](https://deepseek.com)** — AI model provider powering this project's agent (via deepseek-v4-pro, Anthropic-compatible API).
 
 ## License
 
