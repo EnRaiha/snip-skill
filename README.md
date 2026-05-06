@@ -26,7 +26,7 @@ debugging session into a guessing game.
 
 ```bash
 # One command — installs snip + skill + safe config + OpenCode plugin
-curl -fsSL https://raw.githubusercontent.com/<user>/snip-skill/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/EnRaiha/snip-skill/main/install.sh | sh
 ```
 
 ## Manual Install
