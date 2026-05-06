@@ -77,6 +77,11 @@ snip-skill/
     └── config.toml       # Drop-in safe config
 ```
 
+## Credits
+
+- **[edouard-claude/snip](https://github.com/edouard-claude/snip)** — original [snip](https://github.com/edouard-claude/snip) CLI proxy and 126 YAML filters. Inspired by [rtk](https://github.com/rtk-ai/rtk).
+- **[VincentHardouin/opencode-snip](https://github.com/VincentHardouin/opencode-snip)** — OpenCode plugin that auto-prefixes `bash` tool calls with `snip`.
+
 ## License
 
 MIT — matching [snip](https://github.com/edouard-claude/snip)'s license.

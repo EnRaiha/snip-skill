@@ -867,3 +867,11 @@ would cost more in lost context than they'd save in tokens.
 
 Install it. Use the config above. And remember the escape protocol —
 you'll probably never need it, but you'll be glad it's there.
+
+---
+
+## Credits
+
+- **[edouard-claude](https://github.com/edouard-claude)** — creator of [snip](https://github.com/edouard-claude/snip), the CLI proxy and all 126 built-in YAML filters. Inspired by [rtk](https://github.com/rtk-ai/rtk).
+- **[VincentHardouin](https://github.com/VincentHardouin)** — creator of [opencode-snip](https://github.com/VincentHardouin/opencode-snip), the OpenCode plugin that auto-wraps `bash` tool calls.
+- This skill analyzes and curates their work for safe agent use — filter audit, escape protocol, and recommended config are original to this project.
