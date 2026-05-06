@@ -1,0 +1,165 @@
+[display]
+color = true
+emoji = true
+quiet_no_filter = true
+
+[tee]
+enabled = true
+mode = "failures"
+max_files = 20
+
+[filters.enable]
+# ===================== DISABLED =====================
+# These filters strip context the agent needs.
+# See SKILL.md "The Danger Zone" section for details.
+
+# Network — curl removes { and > lines, wget strips non-HTTP output
+curl = false
+wget = false
+
+# Search — head limits hide results
+find = false
+grep = false
+rg = false
+
+# Data tools — head limits truncate structured data
+jq = false
+psql = false
+
+# System — head limits + aggressive stripping hide debugging info
+ps = false
+systemctl = false
+df = false
+du = false
+stat = false
+ping = false
+ssh = false
+rsync = false
+diff = false
+iptables = false
+fail2ban = false
+
+# Logs — dedup hides recurring errors
+docker-logs = false
+kubectl-logs = false
+
+# Git — --stat injection hides code changes
+git-diff = false
+git-show = false
+
+# Other
+sops = false
+ollama = false
+
+# ===================== ENABLED =====================
+# These filters remove noise and preserve signal.
+
+# Git (safe subcommands)
+git-log = true
+git-status = true
+git-branch = true
+git-commit = true
+git-push = true
+git-pull = true
+git-fetch = true
+git-stash = true
+git-add = true
+git-worktree = true
+
+# Go
+go-test = true
+go-build = true
+go-vet = true
+golangci-lint = true
+
+# Rust
+cargo-test = true
+cargo-build = true
+cargo-check = true
+cargo-clippy = true
+cargo-install = true
+cargo-nextest = true
+
+# Python
+pytest = true
+ruff = true
+mypy = true
+basedpyright = true
+pip-install = true
+poetry-install = true
+
+# JavaScript / TypeScript
+jest = true
+vitest = true
+tsc = true
+eslint = true
+biome = true
+oxlint = true
+prettier = true
+npm-install = true
+npx = true
+pnpm-install = true
+pnpm-list = true
+next-build = true
+turbo = true
+nx = true
+
+# Docker (except logs)
+docker-build = true
+docker-ps = true
+docker-images = true
+docker-compose = true
+
+# Kubernetes
+kubectl-get = true
+
+# GitHub CLI
+gh-pr = true
+gh-issue = true
+gh-run = true
+
+# Build tools
+make = true
+gradle = true
+mvn = true
+just = true
+task = true
+
+# Infrastructure
+terraform = true
+tofu = true
+helm = true
+ansible-playbook = true
+gcloud = true
+aws = true
+
+# Ruby
+rubocop = true
+rspec = true
+rake = true
+bundle-install = true
+rails-migrate = true
+rails-routes = true
+
+# .NET
+dotnet-build = true
+dotnet-test = true
+dotnet-format = true
+
+# Linters
+shellcheck = true
+hadolint = true
+markdownlint = true
+yamllint = true
+pre-commit = true
+
+# Elixir
+mix-compile = true
+mix-format = true
+
+# Other safe filters
+jira = true
+prisma = true
+playwright = true
+liquibase = true
+quarto = true
