@@ -2,9 +2,15 @@
 name: snip-skill
 version: 1.0.0
 description: |
-  Use snip (CLI token optimizer) without breaking your AI coding agent.
-  126 YAML filters, escape protocol, safe config, filter-by-filter danger
-  analysis with real before/after examples.
+  snip CLI token optimizer — 126 YAML filters, escape protocol, safe config.
+  Auto-triggers when: snip is mentioned, token optimization is discussed,
+  CLI output is truncated, filters are being configured, or token savings
+  are needed. Use when: setting up snip, debugging filter issues, disabling
+  dangerous filters, configuring recommended settings, or understanding
+  snip's pipeline actions.
+  Keywords: snip, token, filter, CLI proxy, output truncated, token savings,
+  opencode-snip, config.toml, YAML filter, escape protocol, snip proxy,
+  token killer, tee output.
 compatibility: claude-code opencode cursor copilot
 license: MIT
 allowed-tools:
