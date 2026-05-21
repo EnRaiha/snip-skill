@@ -11,7 +11,8 @@ description: |
    Keywords: snip, token, filter, CLI proxy, output truncated, token savings,
    opencode-snip, config.toml, YAML filter, escape protocol, snip proxy,
    token killer, tee output, loop, for loop, while loop, complex command,
-   compound command, shell keyword, unproxyable
+   compound command, shell keyword, unproxyable, corporate, team, project config,
+   .snip, team deployment, override filter, global limits, bypass
 compatibility: claude-code opencode cursor copilot
 license: MIT
 allowed-tools:
@@ -914,11 +915,14 @@ parser. Running them as external commands through snip always fails.
 
 Filed for the snip project (`edouard-claude/snip`):
 
-- **Issue**: [#66](https://github.com/edouard-claude/snip/issues/66)
+- **Issue**: [#66](https://github.com/edouard-claude/snip/issues/66) — reported
+- **Pull Request**: [#67](https://github.com/edouard-claude/snip/pull/67) — 18-line fix submitted (awaiting merge)
 - **Missing**: `for`, `while`, `until`, `select`, `if`, `case`, and their
   closing keywords in `unproxyableReason`
 - **Fix**: ~6 lines added to the `switch` block in `internal/cli/cli.go`
-- **Status**: awaiting upstream patch
+
+Note: a companion design proposal for corporate/project-level `.snip/config.toml`
+was submitted as a response to [#65](https://github.com/edouard-claude/snip/issues/65).
 
 ### Workarounds
 
@@ -974,6 +978,121 @@ is unaffected by this limitation. The loop issue lives in snip's CLI routing
 layer (`unproxyableReason`), not in the filter pipeline. Even if all filters
 are perfectly configured, a `snip for ...` invocation still breaks at the
 parsing stage.
+
+---
+
+## Corporate & Team Deployment
+
+snip can be configured at the **project level** so every developer on a team
+gets the same filter behavior — without touching their personal config.
+
+### How It Works
+
+```
+Team lead creates:  .snip/config.toml  (committed to repo)
+Developer clones:   git clone team-repo
+Developer works:    snip auto-detects .snip/config.toml → applies team settings
+No per-developer:   No snip trust, no .config edits, no env vars needed
+```
+
+### .snip/config.toml — Full Reference
+
+```toml
+# ── Mode ────────────────────────────────────────────────────
+mode = "project"          # "user" (default) or "project"
+                          # "project" = team config wins over user config
+
+# ── Global Parameters ──────────────────────────────────────
+[filters.global]
+max_lines = 0             # 0 = unlimited. Caps all filtered output.
+max_line_length = 0       # 0 = unlimited. Caps per-line length.
+stream_mode = "filter"    # "filter" | "full" | "truncate_only"
+
+# ── Per-Filter Enable/Disable (team policy) ────────────────
+[filters.enable]
+curl = false              # Always disabled for this org
+docker-logs = false
+
+# ── Per-Filter Parameter Overrides ─────────────────────────
+# Each [filters.override.<name>] targets one built-in filter.
+# Keys map to pipeline action parameters:
+#
+#   head = N           → head action, param "n"
+#   truncate_lines = N → truncate_lines action, param "max"
+#   keep_lines = "rx"  → keep_lines action, param "pattern"
+#   stream_mode="full" → skip entire pipeline for this filter
+
+[filters.override.ls]
+head = 0                # Never truncate ls output
+
+[filters.override.dotnet-test]
+stream_mode = "full"    # Always show full test output
+
+[filters.override.make]
+stream_mode = "full"    # CI needs full build output
+
+[filters.override.pytest]
+head = 0                # Full pytest output always
+
+[filters.override.go-test]
+head = 0
+
+[filters.override.docker-build]
+head = 200
+
+[filters.override.npm-install]
+keep_lines = "(error|warn|deprecated|notice|added|removed|packages)"
+
+# ── Bypass (always skip filtering for these commands) ─────
+[filters.bypass]
+commands = ["curl", "wget", "jq", "psql"]
+
+# ── Tee (raw output cache) ─────────────────────────────────
+[tee]
+enabled = true
+mode = "always"           # "always" | "failures" | "never"
+max_files = 100
+max_file_size = 10485760  # 10MB for large build outputs
+```
+
+### Trust Model
+
+| File | Trust Required | Why |
+|------|---------------|-----|
+| `.snip/config.toml` | **No** — auto-loaded | Parameter overrides only (head limits, enable/disable). Cannot execute code. |
+| `.snip/filters/*.yaml` | **Yes** — `snip trust` | Custom filter YAMLs can inject args and run pipeline actions. Must be verified. |
+
+### Two Personas
+
+| | Vibe Coder | Team Developer |
+|---|---|---|
+| Setup | `curl install.sh \| sh` | `git clone` + `.snip/config.toml` in repo |
+| Config | None needed | Auto-detected from repo root |
+| Trust | Never needed | Only for custom filter YAMLs |
+| Escape | `snip proxy <cmd>` | Same |
+| Who controls | Themselves | Team lead via committed `.snip/config.toml` |
+
+### When to Use Each Mode
+
+- **`mode = "project"`**: Corporate/team repos. Team lead's config is authoritative.
+  Individual developers cannot override. Use for: security policies, CI consistency,
+  per-project output limits.
+- **`mode = "user"`** (default): Personal projects. The developer can override any
+  project config setting with their own `~/.config/snip/config.toml`.
+
+### Design Status
+
+This feature was proposed in response to
+[edouard-claude/snip#65](https://github.com/edouard-claude/snip/issues/65)
+with a full implementation design (~180 lines of Go code in `config.go`,
+`pipeline.go`, and a new `projectconfig.go`). Awaiting maintainer review.
+
+### Upstream Tracker
+
+| Issue | Topic | Status |
+|-------|-------|--------|
+| [#66](https://github.com/edouard-claude/snip/issues/66) | Loops/complex commands break snip | PR [#67](https://github.com/edouard-claude/snip/pull/67) submitted |
+| [#65](https://github.com/edouard-claude/snip/issues/65) | Corporate `.snip/config.toml` | Design proposal posted |
 
 ---
 
