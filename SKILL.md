@@ -921,6 +921,13 @@ Filed for the snip project (`edouard-claude/snip`):
   closing keywords in `unproxyableReason`
 - **Fix**: ~6 lines added to the `switch` block in `internal/cli/cli.go`
 
+**After the fix lands** (snip version containing this patch):
+- The workarounds below are no longer needed — snip will reject loops with a
+  clear error instead of producing a cryptic bash syntax error.
+- If `snip --version` returns a version newer than the fix, skip workarounds
+  1-4 and let snip handle it naturally.
+- This skill section will be updated to mark the workarounds as deprecated.
+
 Note: a companion design proposal for corporate/project-level `.snip/config.toml`
 was submitted as a response to [#65](https://github.com/edouard-claude/snip/issues/65).
 
