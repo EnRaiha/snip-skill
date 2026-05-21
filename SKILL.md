@@ -916,7 +916,7 @@ parser. Running them as external commands through snip always fails.
 Filed for the snip project (`edouard-claude/snip`):
 
 - **Issue**: [#66](https://github.com/edouard-claude/snip/issues/66) — reported
-- **Pull Request**: [#67](https://github.com/edouard-claude/snip/pull/67) — 18-line fix submitted (awaiting merge)
+- **Pull Request**: [#68](https://github.com/edouard-claude/snip/pull/68) — fix + corporate config submitted (replaces closed #67)
 - **Missing**: `for`, `while`, `until`, `select`, `if`, `case`, and their
   closing keywords in `unproxyableReason`
 - **Fix**: ~6 lines added to the `switch` block in `internal/cli/cli.go`
@@ -1098,8 +1098,8 @@ with a full implementation design (~180 lines of Go code in `config.go`,
 
 | Issue | Topic | Status |
 |-------|-------|--------|
-| [#66](https://github.com/edouard-claude/snip/issues/66) | Loops/complex commands break snip | PR [#67](https://github.com/edouard-claude/snip/pull/67) submitted |
-| [#65](https://github.com/edouard-claude/snip/issues/65) | Corporate `.snip/config.toml` | Design proposal posted |
+| [#66](https://github.com/edouard-claude/snip/issues/66) | Loops/complex commands break snip | PR [#68](https://github.com/edouard-claude/snip/pull/68) submitted |
+| [#65](https://github.com/edouard-claude/snip/issues/65) | Corporate `.snip/config.toml` | PR [#68](https://github.com/edouard-claude/snip/pull/68) submitted |
 
 ---
 
