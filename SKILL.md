@@ -8,9 +8,10 @@ description: |
   are needed. Use when: setting up snip, debugging filter issues, disabling
   dangerous filters, configuring recommended settings, or understanding
   snip's pipeline actions.
-  Keywords: snip, token, filter, CLI proxy, output truncated, token savings,
-  opencode-snip, config.toml, YAML filter, escape protocol, snip proxy,
-  token killer, tee output.
+   Keywords: snip, token, filter, CLI proxy, output truncated, token savings,
+   opencode-snip, config.toml, YAML filter, escape protocol, snip proxy,
+   token killer, tee output, loop, for loop, while loop, complex command,
+   compound command, shell keyword, unproxyable
 compatibility: claude-code opencode cursor copilot
 license: MIT
 allowed-tools:
@@ -873,6 +874,106 @@ would cost more in lost context than they'd save in tokens.
 
 Install it. Use the config above. And remember the escape protocol —
 you'll probably never need it, but you'll be glad it's there.
+
+---
+
+## Limitations: Loops & Complex Commands
+
+snip proxies a single command at a time — it matches `command` and
+`subcommand` from the first word of the shell invocation. Shell parser
+keywords like `for`, `while`, `until`, `if`, and `case` are **not** binaries;
+they are part of the shell's syntax. Passing them as the "command" to snip
+will always fail.
+
+### The Problem
+
+```bash
+# THIS DOES NOT WORK:
+snip for ip in 192.168.100.{101..110}; do
+  ssh root@$ip "hostname"
+done
+# → bash: syntax error near unexpected token 'do'
+```
+
+When snip receives `for` as the command, bash sees it as a literal argument
+rather than a loop keyword. The `do` keyword has no matching `for` to pair
+with, producing a syntax error. The same applies to `while`, `until`,
+`if/then/else`, and `case/esac`.
+
+### Why
+
+Snip's `unproxyableReason` in `internal/cli/cli.go` currently lists 40+
+shell builtins (cd, export, alias, etc.) but is missing shell **parser
+keywords**: `for`, `while`, `until`, `select`, `if`, `case`, `fi`, `esac`,
+`then`, `elif`, `else`, `done`.
+
+These are not binaries in `$PATH` — they are understood only by the shell's
+parser. Running them as external commands through snip always fails.
+
+### Upstream Issue
+
+Filed for the snip project (`edouard-claude/snip`):
+
+- **Issue**: [#66](https://github.com/edouard-claude/snip/issues/66)
+- **Missing**: `for`, `while`, `until`, `select`, `if`, `case`, and their
+  closing keywords in `unproxyableReason`
+- **Fix**: ~6 lines added to the `switch` block in `internal/cli/cli.go`
+- **Status**: awaiting upstream patch
+
+### Workarounds
+
+**Workaround 1 — Put snip inside the loop body**
+
+```bash
+# Add snip to each command inside the loop
+for ip in 192.168.100.{101..110}; do
+  snip ssh root@$ip "systemctl status nginx" 2>&1
+done
+```
+
+**Workaround 2 — Wrap as a function**
+
+```bash
+# Let snip run the entire function
+scan_hosts() {
+  for ip in 192.168.100.{101..110}; do
+    ssh root@$ip "systemctl status nginx" 2>&1
+  done
+}
+snip scan_hosts
+```
+
+**Workaround 3 — snip proxy inside loops**
+
+```bash
+# Bypass filters but keep agent integration
+for ip in 192.168.100.{101..110}; do
+  snip proxy ssh root@$ip "systemctl status nginx" 2>&1
+done
+```
+
+**Workaround 4 — Patch UNPROXYABLE_COMMANDS in opencode-snip plugin**
+
+If you run snip via the OpenCode plugin (`opencode-snip@latest`), its
+`UNPROXYABLE_COMMANDS` list also needs these keywords:
+
+```typescript
+// node_modules/opencode-snip/src/index.ts
+const UNPROXYABLE_COMMANDS = new Set([
+  "cd", "source", ".", "export", "alias", "unset", "set", "shopt", "eval", "exec",
+  // ADD:
+  "for", "while", "until", "select",
+  "if", "case", "fi", "esac", "then", "elif", "else",
+])
+```
+
+### What the Safe Config Does
+
+Our recommended config (`config.toml` with 24 disabled + 70 enabled filters)
+is unaffected by this limitation. The loop issue lives in snip's CLI routing
+layer (`unproxyableReason`), not in the filter pipeline. Even if all filters
+are perfectly configured, a `snip for ...` invocation still breaks at the
+parsing stage.
 
 ---
 
